@@ -149,17 +149,15 @@ class voice_automaai:
         """
         Add new sample voice
         """
-        try:
+        voice = self.client.clone(
+            name=name,
+            description=description,
+            files=[file_location],
+        )
+        print("voice----------------------------"+ voice)
+        return {"status": 200,"voice_id":voice.voice_id}
 
-            voice = self.client.clone(
-                name=name,
-                description=description,
-                files=[file_location],
-            )
-            return {status: 200,voice_id:voice.voice_id}
 
-        except:
-            return {status: 400,message:"Unable to register the voice. Please check the format"}
 
     def delete_voice(self,voice_id):
         """

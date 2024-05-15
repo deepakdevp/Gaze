@@ -3,15 +3,16 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .voices import voice_automaai
 from .models import Voice
+from rest_framework import status
 global_voice = voice_automaai()
 
 @api_view(['POST'])
 def register_voice(request):
     name = request.data.get('name', None)
     description = request.data.get('description', None)
-    file_url = '/Users/deepak.panwar/personel/Django-React-jwt-authentication/backend/main/audio.mp3'
-    voice_id = global_voice.add_voice(name, description,file_url )
-    if voice_id.status == 200:
+    file_url = '/Users/deepak.panwar/personel/Django-React-jwt-authentication/test.mp4'
+    voice_id = global_voice.add_voice(name,description,file_url)
+    if voice_id["status"] == 200:
         existing_voice_count = Voice.objects.filter(profile=request.user.profile).count()
 
         # Generate the voice_id_name based on the count
@@ -25,7 +26,7 @@ def register_voice(request):
         new_voice.save()
         return Response(voice_id_name)
     else:
-      return Response({"message": voice_id.message}, status=status.HTTP_400_BAD_REQUEST)
+      return Response({"message": voice_id["message"]}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])

@@ -72,7 +72,9 @@ def current_plan(request):
 @api_view(['GET'])
 def unique_voices(request):
     unique_voices = global_voice.get_voice_list()
-
+    for item in unique_voices:
+      voice_entry = Voice.objects.get(voice_id=item['voice_id'])
+      item['voice_id'] = voice_entry.voice_id_name
     return Response(unique_voices)
 
 

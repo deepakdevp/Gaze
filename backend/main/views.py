@@ -4,6 +4,8 @@ from rest_framework.response import Response
 from .voices import voice_automaai
 from .models import Voice
 from rest_framework import status
+import uuid
+
 global_voice = voice_automaai()
 
 @api_view(['POST'])
@@ -19,10 +21,10 @@ def register_voice(request):
     voice_id = global_voice.add_voice(name, description, file_url)
 
     if voice_id["status"] == 200:
-        existing_voice_count = Voice.objects.filter(profile=request.user.profile).count()
+        unique_uuid = str(uuid.uuid4())[:5]
 
         # Generate the voice_id_name based on the count
-        voice_id_name = f"AAI_{existing_voice_count + 1}"
+        voice_id_name = f"AAI_{unique_uuid}"
         new_voice = Voice(
             voice_id=voice_id["voice_id"],
             voice_id_name=voice_id_name,
@@ -41,7 +43,11 @@ def delete_voice(request):
     voice_entry = Voice.objects.get(voice_id_name=voice_id_name)
     voice_id = voice_entry.voice_id
     voice_deleted_response = global_voice.delete_voice(voice_id)
-    return Response(voice_id_name + voice_deleted_response)
+    if voice_deleted_response["status"] == 200:
+      voice_entry.delete()
+      return Response(voice_id_name + voice_deleted_response["message"])
+    else:
+      return Response(voice_deleted_response["message"])
 
 @api_view(['POST'])
 def generate_voice(request):
@@ -49,7 +55,8 @@ def generate_voice(request):
     voice_id_name = request.data.get("voice_id_name")
     voice_entry = Voice.objects.get(voice_id_name=voice_id_name)
     voice_id = voice_entry.voice_id
-    generated_voice_response = global_voice.generate_voice(voice_id,text,True)
+    voice_name = voice_entry.voice_name
+    generated_voice_response = global_voice.generate_voice(voice_id,voice_name,text,True)
     return Response(generated_voice_response)
 
 @api_view(['GET'])

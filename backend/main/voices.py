@@ -16,7 +16,7 @@ class voice_automaai:
             api_key=self.AAI_VOICE_API_KEY, # Defaults to ELEVEN_API_KEY
         )
         self.access_status = False # load from the mapping
-
+        self.OUTPUT_PATH = "/Users/deepak.panwar/personel/Django-React-jwt-authentication/output.mp3"
         self.voice_setting = {"optimize_streaming_latency":"4","output_format":"mp3_44100_128"}
         self.data = {
             "text": "",
@@ -174,14 +174,14 @@ class voice_automaai:
             response = requests.request("DELETE", url, headers=self.headers)
             response = json.loads(response.text)
             if response["status"]=="ok":
-                return "Deleted "+voice_id+" successfully. Name:"+voice_name+" and sample file name:"+voice_file_name
+                return " deleted successfully. Name:"+voice_name+" and sample file name:"+voice_file_name
         except:
-            return "Check voice list. Seems not able to find voice id"+voice_id
+            return "Check voice list. Seems not able to find voice id"
         return
 
     def generate_voice(self,voice_id, text, is_file = False):
         # Construct the URL for the Text-to-Speech API request
-        tts_url = f"https://api.elevenlabs.io/v1/text-to-speech/{VOICE_ID}/stream"
+        tts_url = f"https://api.elevenlabs.io/v1/text-to-speech/{voice_id}/stream"
 
         # Set up headers for the API request, including the API key for authentication
         # headers = {
@@ -199,7 +199,7 @@ class voice_automaai:
             CHUNK_SIZE = 1024 # Size of chunks to read/write at a time
             if response.ok:
                 # Open the output file in write-binary mode
-                with open(OUTPUT_PATH, "wb") as f:
+                with open(self.OUTPUT_PATH, "wb") as f:
                     # Read the response in chunks and write to the file
                     for chunk in response.iter_content(chunk_size=CHUNK_SIZE):
                         f.write(chunk)

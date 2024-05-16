@@ -41,7 +41,7 @@ def delete_voice(request):
     voice_entry = Voice.objects.get(voice_id_name=voice_id_name)
     voice_id = voice_entry.voice_id
     voice_deleted_response = global_voice.delete_voice(voice_id)
-    return Response(voice_deleted_response)
+    return Response(voice_id_name + voice_deleted_response)
 
 @api_view(['POST'])
 def generate_voice(request):
@@ -49,7 +49,7 @@ def generate_voice(request):
     voice_id_name = request.data.get("voice_id_name")
     voice_entry = Voice.objects.get(voice_id_name=voice_id_name)
     voice_id = voice_entry.voice_id
-    generated_voice_response = global_voice.generate_voice(voice_id,text)
+    generated_voice_response = global_voice.generate_voice(voice_id,text,True)
     return Response(generated_voice_response)
 
 @api_view(['GET'])

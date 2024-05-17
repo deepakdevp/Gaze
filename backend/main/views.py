@@ -55,7 +55,7 @@ def generate_voice(request):
     voice_id_name = request.data.get("voice_id_name")
     voice_entry = Voice.objects.get(voice_id_name=voice_id_name)
     voice_id = voice_entry.voice_id
-    voice_name = voice_entry.voice_name
+    voice_name = voice_entry.voice_id_name
     generated_voice_response = global_voice.generate_voice(voice_id,voice_name,text,True)
     return Response(generated_voice_response)
 

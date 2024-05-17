@@ -16,7 +16,7 @@ class voice_automaai:
             api_key=self.AAI_VOICE_API_KEY, # Defaults to ELEVEN_API_KEY
         )
         self.access_status = False # load from the mapping
-        self.OUTPUT_PATH = "/Users/deepak.panwar/personel/Django-React-jwt-authentication/"
+        self.OUTPUT_PATH = "/home/singhv04/work/code/celebgage/deliverable/"
         self.voice_setting = {"optimize_streaming_latency":"4","output_format":"mp3_44100_128"}
         self.data = {
             "text": "",
@@ -118,7 +118,7 @@ class voice_automaai:
         Add expiry date check
         """
         usage_summary = self.get_usage_summary()
-        voice_list = get_voice_list()
+        voice_list = self.get_voice_list()
         if usage_summary["character_used"]<usage_summary["character_limit"] and usage_summary["number_of_voices_add_edit_used"]<usage_summary["number_of_voices_add_edit_allowed"] and len(voice_list)<usage_summary["number_of_voices_allowed"]:
             return True
         else:
@@ -199,7 +199,7 @@ class voice_automaai:
             CHUNK_SIZE = 1024 # Size of chunks to read/write at a time
             if response.ok:
                 # Open the output file in write-binary mode
-                with open(self.OUTPUT_PATH + voice_name + '.mp3', "wb") as f:
+                with open(self.OUTPUT_PATH + voice_name + '.mp4', "wb") as f:
                     # Read the response in chunks and write to the file
                     for chunk in response.iter_content(chunk_size=CHUNK_SIZE):
                         f.write(chunk)

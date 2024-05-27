@@ -1,9 +1,13 @@
-
-from rest_framework.decorators import api_view
+from rest_framework import status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from base.models import Profile
+from django.utils.dateparse import parse_datetime
 from .voices import voice_automaai
 from .models import Voice
 from rest_framework import status
+from django.utils import timezone
 import uuid
 
 global_voice = voice_automaai()
@@ -63,6 +67,50 @@ def generate_voice(request):
 def get_usage_summary(request):
     get_usage_summary = global_voice.get_usage_summary()
     return Response(get_usage_summary)
+
+@api_view(['GET'])
+def check_status(request):
+    try:
+        profile = request.user.profile
+    except Profile.DoesNotExist:
+        return Response({"error": "Profile not found"}, status=status.HTTP_404_NOT_FOUND)
+    check_acess_status = global_voice.check_acess_status()
+    current_time = timezone.now()
+    if current_time > profile.expiry_date:
+        if check_acess_status:
+            return Response({"status": "Token expired"}, status=status.HTTP_200_OK)
+        else:
+            return Response({"status": "Usage limit reached"}, status=status.HTTP_200_OK)
+    else:
+        return Response({"status": "Token valid"}, status=status.HTTP_200_OK)
+
+    return Response(get_usage_summary)
+
+
+@api_view(['PATCH'])
+def set_expiry_date(request):
+    try:
+        profile = request.user.profile
+    except Profile.DoesNotExist:
+        return Response({"error": "Profile not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    expiry_date_str = request.data.get('expiry_date')
+    if not expiry_date_str:
+        return Response({"error": "expiry_date is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        expiry_date = parse_datetime(expiry_date_str)
+        if expiry_date is None:
+            raise ValueError("Invalid date format")
+    except ValueError as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+    profile.expiry_date = expiry_date
+    profile.save()
+
+    return Response({"expiry_date": profile.expiry_date}, status=status.HTTP_200_OK)
+
+
 
 @api_view(['GET'])
 def current_plan(request):

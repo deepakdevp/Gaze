@@ -112,7 +112,7 @@ class voice_automaai:
 
 
 
-    def check_acess_status(self, voice_api_key):
+    def check_acess_status(self):
         """
         Returns whether the access has expired or not
         Add expiry date check

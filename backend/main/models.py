@@ -5,8 +5,6 @@ class Voice(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='voices')
     voice_id = models.CharField(max_length=100)
     voice_id_name = models.CharField(max_length=100)
-    api_key =  models.CharField(max_length=200)
-    api_key_mapped = models.CharField(max_length=200)
     file_url = models.URLField()
 
     def __str__(self):

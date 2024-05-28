@@ -7,23 +7,37 @@ from django.utils.dateparse import parse_datetime
 from .voices import voice_automaai
 from .models import Voice
 from django.utils import timezone
+import os
 import uuid
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from .decorators import check_status_func
+from django.conf import settings
 global_voice = voice_automaai()
 
 @api_view(['POST'])
 @check_status_func
 def register_voice(request):
     try:
+        # Get name from request data
         name = request.data.get('name', None)
-        file_url = request.data.get('file_url', None)
 
-        if not name or not file_url:
-            return Response({"message": "Both 'name' and 'file_url' are required fields."}, status=status.HTTP_400_BAD_REQUEST)
+        # Check if file is in the request
+        if 'file' not in request.FILES or not name:
+            return Response({"message": "Both 'name' and 'file' are required fields."}, status=status.HTTP_400_BAD_REQUEST)
 
+        file = request.FILES['file']
         description = request.data.get('description', None)
-        voice_id = global_voice.add_voice(name, description, file_url)
+
+        # Save the file to the server
+        file_name = default_storage.save(file.name, ContentFile(file.read()))
+        file_url = default_storage.url(file_name)
+        absolute_file_url = os.path.join(settings.MEDIA_ROOT, file_name)
+
+        # Register the voice using the file_url
+        voice_id = global_voice.add_voice(name, description, absolute_file_url)
+
 
         if voice_id["status"] == 200:
             unique_uuid = str(uuid.uuid4())[:5]
@@ -35,8 +49,16 @@ def register_voice(request):
             )
             new_voice.profile = request.user.profile
             new_voice.save()
+
+            # Delete the file after processing
+            if default_storage.exists(file_name):
+                default_storage.delete(file_name)
+
             return Response(voice_id_name)
         else:
+            # Delete the file if there was an error in registering the voice
+            if default_storage.exists(file_name):
+                default_storage.delete(file_name)
             return Response({"message": voice_id["message"]}, status=status.HTTP_400_BAD_REQUEST)
 
     except Exception as e:

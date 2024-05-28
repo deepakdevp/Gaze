@@ -9,10 +9,11 @@ from .models import Voice
 from django.utils import timezone
 import uuid
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
-
+from .decorators import check_status_func
 global_voice = voice_automaai()
 
 @api_view(['POST'])
+@check_status_func
 def register_voice(request):
     try:
         name = request.data.get('name', None)
@@ -43,6 +44,7 @@ def register_voice(request):
 
 
 @api_view(['POST'])
+@check_status_func
 def delete_voice(request):
     try:
         voice_id_name = request.data.get("voice_id_name")
@@ -63,6 +65,7 @@ def delete_voice(request):
 
 
 @api_view(['POST'])
+@check_status_func
 def generate_voice(request):
     try:
         text = request.data.get("text")
@@ -80,6 +83,7 @@ def generate_voice(request):
 
 
 @api_view(['GET'])
+@check_status_func
 def get_usage_summary(request):
     try:
         get_usage_summary = global_voice.get_usage_summary()
@@ -113,6 +117,7 @@ def check_status(request):
 
 
 @api_view(['PATCH'])
+@check_status_func
 def set_expiry_date(request):
     try:
         profile = request.user.profile
@@ -150,6 +155,7 @@ def current_plan(request):
 
 
 @api_view(['GET'])
+@check_status_func
 def unique_voices(request):
     try:
         unique_voices = global_voice.get_voice_list()

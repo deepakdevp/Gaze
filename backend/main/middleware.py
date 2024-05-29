@@ -4,7 +4,7 @@ from django.utils.deprecation import MiddlewareMixin
 class XForwardedForMiddleware(MiddlewareMixin):
 
     def process_request(self, request):
-        if not request.META.has_key('REMOTE_ADDR'):
+        if 'REMOTE_ADDR' not in request.META:
             try:
                 request.META['REMOTE_ADDR'] = request.META['HTTP_X_REAL_IP']
             except:

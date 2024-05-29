@@ -18,7 +18,7 @@ from django_ratelimit.decorators import ratelimit
 global_voice = voice_automaai()
 
 @api_view(['POST'])
-# @ratelimit(key='user', rate='3000/m', block=True, method='POST')
+@ratelimit(key='ip', rate='3000/m', block=True, method='POST')
 def register_voice(request):
     try:
         # Get name from request data
@@ -67,7 +67,7 @@ def register_voice(request):
 
 
 @api_view(['POST'])
-# @ratelimit(key='user', rate='3000/m', block=True, method='POST')
+@ratelimit(key='ip', rate='3000/m', block=True, method='POST')
 def delete_voice(request):
     try:
         voice_id_name = request.data.get("voice_id_name")
@@ -88,7 +88,7 @@ def delete_voice(request):
 
 
 @api_view(['POST'])
-# @ratelimit(key='user', rate='3000/m', block=True, method='POST')
+@ratelimit(key='ip', rate='3000/m', block=True, method='POST')
 def generate_voice(request):
     try:
         text = request.data.get("text")
@@ -104,7 +104,7 @@ def generate_voice(request):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-# @ratelimit(key='user', rate='3000/m', block=True, method='POST')
+@ratelimit(key='ip', rate='3000/m', block=True, method='POST')
 @api_view(['GET'])
 def get_usage_summary(request):
     try:
@@ -114,7 +114,7 @@ def get_usage_summary(request):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-# @ratelimit(key='user', rate='3000/m', block=True, method='POST')
+@ratelimit(key='ip', rate='3000/m', block=True, method='POST')
 @api_view(['GET'])
 def check_status(request):
     try:
@@ -137,7 +137,7 @@ def check_status(request):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-# @ratelimit(key='user', rate='3000/m', block=True, method='POST')
+@ratelimit(key='ip', rate='3000/m', block=True, method='POST')
 @api_view(['PATCH'])
 def set_expiry_date(request):
     try:
@@ -164,7 +164,7 @@ def set_expiry_date(request):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-# @ratelimit(key='user', rate='3000/m', block=True, method='POST')
+@ratelimit(key='ip', rate='3000/m', block=True, method='POST')
 @api_view(['GET'])
 def current_plan(request):
     try:
@@ -174,7 +174,7 @@ def current_plan(request):
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-# @ratelimit(key='user', rate='3000/m', block=True, method='POST')
+@ratelimit(key='ip', rate='3000/m', block=True, method='POST')
 @api_view(['GET'])
 def unique_voices(request):
     try:

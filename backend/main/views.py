@@ -100,7 +100,7 @@ def generate_voice(request):
         generated_voice_response = global_voice.generate_voice(voice_id, voice_name, text, True)
         if generated_voice_response.ok:
             response_content = generated_voice_response.content
-            response_stream = HttpResponse(response_content, content_type='audio/mp4')
+            response_stream = HttpResponse(response_content, content_type='audio/mp3')
             response_stream['Content-Disposition'] = f'attachment; filename="{voice_name}.mp4"'
             return response_stream
         else:

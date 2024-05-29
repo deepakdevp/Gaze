@@ -7,6 +7,7 @@ from django.utils.dateparse import parse_datetime
 from .voices import voice_automaai
 from .models import Voice
 from django.utils import timezone
+from django.http import HttpResponse, JsonResponse
 import os
 import uuid
 from django.core.files.storage import default_storage
@@ -97,7 +98,13 @@ def generate_voice(request):
         voice_id = voice_entry.voice_id
         voice_name = voice_entry.voice_id_name
         generated_voice_response = global_voice.generate_voice(voice_id, voice_name, text, True)
-        return Response(generated_voice_response)
+        if generated_voice_response.ok:
+            response_content = generated_voice_response.content
+            response_stream = HttpResponse(response_content, content_type='audio/mp4')
+            response_stream['Content-Disposition'] = f'attachment; filename="{voice_name}.mp4"'
+            return response_stream
+        else:
+            return Response({'error': 'Failed to generate voice'}, status=generated_voice_response.status_code)
 
     except ObjectDoesNotExist:
         return Response({"error": "Voice entry not found"}, status=status.HTTP_404_NOT_FOUND)

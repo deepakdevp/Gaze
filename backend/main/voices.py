@@ -195,16 +195,5 @@ class voice_automaai:
         # Make the POST request to the TTS API with headers and data, enabling streaming response
         response = requests.post(tts_url, headers=self.headers_json, json=self.data, stream=True, params=self.voice_setting)
 
-        if is_file:
-            CHUNK_SIZE = 1024 # Size of chunks to read/write at a time
-            if response.ok:
-                # Open the output file in write-binary mode
-                with open(self.OUTPUT_PATH + voice_name + '.mp4', "wb") as f:
-                    # Read the response in chunks and write to the file
-                    for chunk in response.iter_content(chunk_size=CHUNK_SIZE):
-                        f.write(chunk)
-                    # Inform the user of success
-                print("Audio stream saved successfully.")
-            return
-        else:
-            return response
+
+        return response

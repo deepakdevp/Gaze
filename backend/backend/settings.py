@@ -105,6 +105,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "silk.middleware.SilkyMiddleware",
+    "main.middleware.XForwardedForMiddleware"
 ]
 
 ROOT_URLCONF = "backend.urls"

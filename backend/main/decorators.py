@@ -11,7 +11,7 @@ def check_status_func(view_func):
             return response
         except Exception as e:
             # Call the check_status function to validate the token
-            check_status_response = global_voice.check_status(request)
+            check_status_response = global_voice.check_acess_status(request)
             if check_status_response.data.get("status") == "Token valid":
                 return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             else:

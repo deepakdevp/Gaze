@@ -18,7 +18,6 @@ from django_ratelimit.decorators import ratelimit
 global_voice = voice_automaai()
 
 @api_view(['POST'])
-@check_status_func
 @ratelimit(key='ip', rate='3000/m', block=True, method='POST')
 def register_voice(request):
     try:
@@ -68,7 +67,6 @@ def register_voice(request):
 
 
 @api_view(['POST'])
-@check_status_func
 @ratelimit(key='ip', rate='3000/m', block=True, method='POST')
 def delete_voice(request):
     try:
@@ -90,7 +88,6 @@ def delete_voice(request):
 
 
 @api_view(['POST'])
-@check_status_func
 @ratelimit(key='ip', rate='3000/m', block=True, method='POST')
 def generate_voice(request):
     try:
@@ -109,7 +106,6 @@ def generate_voice(request):
 
 @ratelimit(key='ip', rate='3000/m', block=True, method='POST')
 @api_view(['GET'])
-@check_status_func
 def get_usage_summary(request):
     try:
         get_usage_summary = global_voice.get_usage_summary()
@@ -143,7 +139,6 @@ def check_status(request):
 
 @ratelimit(key='ip', rate='3000/m', block=True, method='POST')
 @api_view(['PATCH'])
-@check_status_func
 def set_expiry_date(request):
     try:
         profile = request.user.profile
@@ -181,7 +176,6 @@ def current_plan(request):
 
 @ratelimit(key='ip', rate='3000/m', block=True, method='POST')
 @api_view(['GET'])
-@check_status_func
 def unique_voices(request):
     try:
         unique_voices = global_voice.get_voice_list()
